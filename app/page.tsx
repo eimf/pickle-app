@@ -1,10 +1,37 @@
-"use client";
-
 import TournamentCard from "@/components/TournamentCard";
-import { tournaments } from "@/lib/mockData";
+import { adaptTournamentToUI } from "@/lib/adapters";
+import prisma from "@/lib/prisma";
 import { Zap, Trophy, Users, Calendar } from "lucide-react";
 
-export default function Home() {
+// Make homepage dynamic to prevent caching
+export const dynamic = 'force-dynamic';
+
+async function getHomepageTournaments() {
+  try {
+    const tournaments = await prisma.tournament.findMany({
+      include: {
+        matches: {
+          include: {
+            player1: true,
+            player2: true,
+          },
+        },
+      },
+      orderBy: {
+        startDate: 'asc',
+      },
+    });
+    
+    return tournaments.map(tournament => adaptTournamentToUI(tournament));
+  } catch (error) {
+    console.error('Error fetching tournaments:', error);
+    return [];
+  }
+}
+
+export default async function Home() {
+  // Fetch tournaments from the database
+  const tournaments = await getHomepageTournaments();
     return (
         <div className="min-h-screen">
             {/* Hero Section */}

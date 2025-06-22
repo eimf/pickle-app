@@ -1,0 +1,69 @@
+// This is your Prisma schema file,
+// learn more about it in the docs: https://pris.ly/d/prisma-schema
+
+generator client {
+  provider = "prisma-client-js"
+}
+
+datasource db {
+  provider = "postgresql"
+  url      = env("DATABASE_URL")
+}
+
+model Tournament {
+  @@map("tournament")
+  
+  id          String   @id @default(uuid())
+  name        String
+  description String?
+  startDate   DateTime @map("start_date")
+  endDate     DateTime @map("end_date")
+  location    String
+  createdAt   DateTime @default(now()) @map("created_at")
+  updatedAt   DateTime @updatedAt @map("updated_at")
+
+  // Relationships
+  matches     Match[]
+}
+
+model Match {
+  @@map("match")
+  
+  id           String      @id @default(uuid())
+  tournamentId String      @map("tournament_id")
+  player1Id    String      @map("player1_id")
+  player2Id    String      @map("player2_id")
+  score1       Int
+  score2       Int
+  status       MatchStatus
+  scheduledAt  DateTime    @map("scheduled_at")
+  createdAt    DateTime    @default(now()) @map("created_at")
+  updatedAt    DateTime    @updatedAt @map("updated_at")
+
+  // Relationships
+  tournament   Tournament  @relation(fields: [tournamentId], references: [id])
+  player1      Player      @relation("MatchesAsPlayer1", fields: [player1Id], references: [id])
+  player2      Player      @relation("MatchesAsPlayer2", fields: [player2Id], references: [id])
+}
+
+model Player {
+  @@map("player")
+  
+  id        String   @id @default(uuid())
+  name      String
+  email     String   @unique
+  createdAt DateTime @default(now()) @map("created_at")
+  updatedAt DateTime @updatedAt @map("updated_at")
+
+  // Relationships
+  matchesAsPlayer1 Match[] @relation("MatchesAsPlayer1")
+  matchesAsPlayer2 Match[] @relation("MatchesAsPlayer2")
+}
+
+enum MatchStatus {
+  @@map("match_status")
+  SCHEDULED
+  ONGOING
+  COMPLETED
+  CANCELLED
+}

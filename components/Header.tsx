@@ -24,18 +24,6 @@ export default function Header() {
                     </div>
                 </Link>
 
-                {/* Desktop Navigation */}
-                <div className="hidden md:flex flex-1 justify-center">
-                    <nav className="flex items-center">
-                        <Link
-                            href="/"
-                            className="text-white/80 hover:text-neon-cyan transition-colors duration-300 font-medium hover:animate-glow"
-                        >
-                            Selkirk Tournaments
-                        </Link>
-                    </nav>
-                </div>
-
                 {/* Profile Icon */}
                 <div className="flex items-center gap-4 ml-auto">
                     <button

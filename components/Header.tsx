@@ -1,12 +1,11 @@
 "use client";
 
 import { useState } from "react";
-import { User, Menu, X } from "lucide-react";
+import { User } from "lucide-react";
 import PickleballLogo from "./PickleballLogo";
 import Link from "next/link";
 
 export default function Header() {
-    const [isMenuOpen, setIsMenuOpen] = useState(false);
     const [isSignedIn, setIsSignedIn] = useState(false);
 
     return (
@@ -26,68 +25,34 @@ export default function Header() {
                 </Link>
 
                 {/* Desktop Navigation */}
-                <nav className="hidden md:flex items-center gap-6">
-                    <Link
-                        href="/"
-                        className="text-white/80 hover:text-neon-cyan transition-colors duration-300 font-medium hover:animate-glow"
-                    >
-                        Tournaments
-                    </Link>
-                </nav>
+                <div className="hidden md:flex flex-1 justify-center">
+                    <nav className="flex items-center">
+                        <Link
+                            href="/"
+                            className="text-white/80 hover:text-neon-cyan transition-colors duration-300 font-medium hover:animate-glow"
+                        >
+                            Selkirk Tournaments
+                        </Link>
+                    </nav>
+                </div>
 
                 {/* Profile Icon */}
-                <div className="flex items-center gap-4">
+                <div className="flex items-center gap-4 ml-auto">
                     <button
-                        onClick={() => setIsSignedIn(!isSignedIn)}
+                        onClick={() => {
+                            if (isSignedIn) {
+                                setIsSignedIn(false);
+                                window.location.href = "/profile";
+                            } else {
+                                window.location.href = "/signin";
+                            }
+                        }}
                         className="p-2 rounded-full bg-glass-gradient border border-white/20 backdrop-blur-sm hover:shadow-neon-cyan transition-all duration-300 group"
                     >
                         <User className="w-5 h-5 text-neon-cyan group-hover:animate-pulse" />
                     </button>
-
-                    {/* Mobile Menu Button */}
-                    <button
-                        onClick={() => setIsMenuOpen(!isMenuOpen)}
-                        className="md:hidden p-2 rounded-full bg-glass-gradient border border-white/20 backdrop-blur-sm hover:shadow-neon-pink transition-all duration-300"
-                    >
-                        {isMenuOpen ? (
-                            <X className="w-5 h-5 text-neon-pink" />
-                        ) : (
-                            <Menu className="w-5 h-5 text-neon-pink" />
-                        )}
-                    </button>
                 </div>
             </div>
-
-            {/* Mobile Menu */}
-            {isMenuOpen && (
-                <div className="md:hidden backdrop-blur-lg bg-black/30 border-t border-white/20">
-                    <nav className="container mx-auto px-4 py-4 flex flex-col gap-4">
-                        <Link
-                            href="/"
-                            className="text-white/80 hover:text-neon-cyan transition-colors duration-300 font-medium py-2"
-                            onClick={() => setIsMenuOpen(false)}
-                        >
-                            Tournaments
-                        </Link>
-                        <Link
-                            href="/profile"
-                            className="text-white/80 hover:text-neon-green transition-colors duration-300 font-medium py-2"
-                            onClick={() => setIsMenuOpen(false)}
-                        >
-                            My Profile
-                        </Link>
-                        {!isSignedIn && (
-                            <Link
-                                href="/signin"
-                                className="text-white/80 hover:text-neon-pink transition-colors duration-300 font-medium py-2"
-                                onClick={() => setIsMenuOpen(false)}
-                            >
-                                Sign In
-                            </Link>
-                        )}
-                    </nav>
-                </div>
-            )}
         </header>
     );
 }

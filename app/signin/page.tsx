@@ -3,6 +3,7 @@
 import { useState } from 'react';
 import { Mail, Lock, User, Eye, EyeOff } from 'lucide-react';
 import PickleballLogo from '@/components/PickleballLogo';
+import { FaGoogle, FaFacebook } from 'react-icons/fa';
 
 export default function SignIn() {
   const [isSignUp, setIsSignUp] = useState(false);
@@ -158,11 +159,11 @@ export default function SignIn() {
 
             <div className="mt-6 grid grid-cols-2 gap-3">
               <button className="flex items-center justify-center gap-2 p-3 bg-white/10 border border-white/20 rounded-xl hover:bg-white/20 transition-all">
-                <div className="w-5 h-5 bg-white rounded" />
+                <FaGoogle className="w-5 h-5" />
                 <span className="text-white/80 text-sm">Google</span>
               </button>
               <button className="flex items-center justify-center gap-2 p-3 bg-white/10 border border-white/20 rounded-xl hover:bg-white/20 transition-all">
-                <div className="w-5 h-5 bg-blue-600 rounded" />
+                <FaFacebook className="w-5 h-5 text-blue-600" />
                 <span className="text-white/80 text-sm">Facebook</span>
               </button>
             </div>

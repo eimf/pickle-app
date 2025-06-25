@@ -1,6 +1,7 @@
 'use client';
 
 import { useState } from 'react';
+import { signIn } from 'next-auth/react';
 import { Mail, Lock, User, Eye, EyeOff } from 'lucide-react';
 import PickleballLogo from '@/components/PickleballLogo';
 import { FaGoogle, FaFacebook } from 'react-icons/fa';
@@ -8,6 +9,9 @@ import { FaGoogle, FaFacebook } from 'react-icons/fa';
 export default function SignIn() {
   const [isSignUp, setIsSignUp] = useState(false);
   const [showPassword, setShowPassword] = useState(false);
+  const [isLoading, setIsLoading] = useState(false);
+  const [error, setError] = useState<string | null>(null);
+  const [success, setSuccess] = useState<string | null>(null);
   const [formData, setFormData] = useState({
     name: '',
     email: '',
@@ -15,10 +19,80 @@ export default function SignIn() {
     confirmPassword: ''
   });
 
-  const handleSubmit = (e: React.FormEvent) => {
+  const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
-    // Handle sign in/up logic here
-    console.log('Form submitted:', formData);
+    
+    // Reset states
+    setError(null);
+    setSuccess(null);
+    setIsLoading(true);
+    
+    try {
+      if (isSignUp) {
+        // Check if passwords match
+        if (formData.password !== formData.confirmPassword) {
+          setError('Passwords do not match');
+          setIsLoading(false);
+          return;
+        }
+        
+        // Send signup request
+        const response = await fetch('/api/auth/signup', {
+          method: 'POST',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify({
+            name: formData.name,
+            email: formData.email,
+            password: formData.password
+          })
+        });
+        
+        const data = await response.json();
+        
+        if (!response.ok) {
+          throw new Error(data.error || 'Failed to sign up');
+        }
+        
+        // Automatically sign in after successful signup
+        await signIn('credentials', {
+          redirect: false,
+          email: formData.email,
+          password: formData.password,
+        });
+        window.location.href = '/dashboard';
+        
+        // Optionally reset form
+        setFormData({
+          name: '',
+          email: '',
+          password: '',
+          confirmPassword: ''
+        });
+        setIsSignUp(false);
+      } else {
+        // Use NextAuth signIn with credentials provider
+        const result = await signIn('credentials', {
+          redirect: false,
+          email: formData.email,
+          password: formData.password,
+        });
+
+        if (result?.error) {
+          throw new Error(result.error);
+        }
+
+        setSuccess('Signed in successfully!');
+        // Redirect
+        setTimeout(() => {
+          window.location.href = '/dashboard';
+        }, 500);
+      }
+    } catch (err: any) {
+      setError(err.message || 'Something went wrong. Please try again.');
+      console.error('Auth error:', err);
+    } finally {
+      setIsLoading(false);
+    }
   };
 
   return (
@@ -126,11 +200,33 @@ export default function SignIn() {
               </div>
             )}
 
+            {/* Error and Success Messages */}
+            {error && (
+              <div className="p-3 rounded-lg bg-red-500/20 border border-red-500/50 text-red-200 text-sm">
+                {error}
+              </div>
+            )}
+            
+            {success && (
+              <div className="p-3 rounded-lg bg-green-500/20 border border-green-500/50 text-green-200 text-sm">
+                {success}
+              </div>
+            )}
+            
             <button
               type="submit"
-              className="w-full bg-neon-gradient p-4 rounded-xl font-bold text-xl text-black hover:shadow-neon-cyan/50 transition-all duration-300 hover:scale-105 animate-neon-pulse"
+              disabled={isLoading}
+              className="w-full bg-neon-gradient p-4 rounded-xl font-bold text-xl text-black hover:shadow-neon-cyan/50 transition-all duration-300 hover:scale-105 animate-neon-pulse disabled:opacity-50 disabled:cursor-not-allowed disabled:hover:scale-100 disabled:hover:shadow-none"
             >
-              {isSignUp ? 'Create Account' : 'Sign In'}
+              {isLoading ? (
+                <span className="flex items-center justify-center">
+                  <svg className="animate-spin -ml-1 mr-3 h-5 w-5 text-black" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24">
+                    <circle className="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" strokeWidth="4"></circle>
+                    <path className="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4zm2 5.291A7.962 7.962 0 014 12H0c0 3.042 1.135 5.824 3 7.938l3-2.647z"></path>
+                  </svg>
+                  {isSignUp ? 'Creating Account...' : 'Signing In...'}
+                </span>
+              ) : (isSignUp ? 'Create Account' : 'Sign In')}
             </button>
           </form>
 

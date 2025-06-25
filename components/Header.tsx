@@ -1,12 +1,15 @@
 "use client";
 
-import { useState } from "react";
 import { User } from "lucide-react";
 import PickleballLogo from "./PickleballLogo";
 import Link from "next/link";
+import { useSession } from "next-auth/react";
+import { useRouter } from "next/navigation";
 
 export default function Header() {
-    const [isSignedIn, setIsSignedIn] = useState(false);
+    const { data: session, status } = useSession();
+    const router = useRouter();
+    const isSignedIn = status === "authenticated";
 
     return (
         <header className="fixed top-0 left-0 right-0 z-50 backdrop-blur-lg bg-white/10 border-b border-white/20 shadow-glass">
@@ -29,10 +32,9 @@ export default function Header() {
                     <button
                         onClick={() => {
                             if (isSignedIn) {
-                                setIsSignedIn(false);
-                                window.location.href = "/profile";
+                                router.push("/profile");
                             } else {
-                                window.location.href = "/signin";
+                                router.push("/signin");
                             }
                         }}
                         className="p-2 rounded-full bg-glass-gradient border border-white/20 backdrop-blur-sm hover:shadow-neon-cyan transition-all duration-300 group"

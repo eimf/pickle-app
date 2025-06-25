@@ -3,6 +3,7 @@ import type { Metadata } from 'next';
 import { Inter } from 'next/font/google';
 import Header from '@/components/Header';
 import ParallaxBackground from '@/components/ParallaxBackground';
+import Providers from './providers';
 
 const inter = Inter({ subsets: ['latin'] });
 
@@ -19,11 +20,13 @@ export default function RootLayout({
   return (
     <html lang="en">
       <body className={inter.className}>
-        <ParallaxBackground />
-        <Header />
-        <main className="pt-16 min-h-screen">
-          {children}
-        </main>
+        <Providers>
+          <ParallaxBackground />
+          <Header />
+          <main className="pt-16 min-h-screen">
+            {children}
+          </main>
+        </Providers>
       </body>
     </html>
   );

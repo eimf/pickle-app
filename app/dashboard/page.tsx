@@ -31,47 +31,38 @@ export default function Dashboard() {
     }
 
     return (
-        <div className="min-h-screen bg-gradient-to-br from-gray-900 to-black text-white">
+        <div className="min-h-screen py-8 px-4">
             {/* Header */}
-            <header className="p-4 border-b border-white/10">
-                <div className="container mx-auto flex items-center justify-between">
-                    <button
-                        onClick={handleSignOut}
-                        className="px-4 py-2 bg-white/10 hover:bg-white/20 rounded-lg text-sm"
-                    >
-                        Sign Out
-                    </button>
+            <header className="bg-glass-gradient backdrop-blur-xl border border-white/20 rounded-3xl p-4 mb-8 max-w-6xl mx-auto flex items-center justify-between">
+                <div className="flex flex-col">
+                    <h2 className="text-3xl font-bold text-white animate-glow">
+                        {user?.name ?? "User"}
+                    </h2>
+                    {user?.email && (
+                        <span className="text-neon-cyan text-sm">
+                            {user.email}
+                        </span>
+                    )}
                 </div>
+                <button
+                    onClick={handleSignOut}
+                    className="px-4 py-2 bg-white/10 hover:bg-white/20 rounded-lg text-sm"
+                >
+                    Sign Out
+                </button>
             </header>
 
             {/* Main Content */}
-            <main className="container mx-auto py-8 px-4">
+            <main className="container mx-auto max-w-6xl py-8 px-4">
                 <div className="bg-glass-gradient backdrop-blur-xl border border-white/20 rounded-3xl p-8 shadow-glass">
-                    <h2 className="text-3xl font-bold mb-6">
-                        Welcome, {user?.name ?? user?.email ?? "User"}!
-                    </h2>
-                    <p className="text-white/70 mb-8">
-                        You have successfully signed in to your PickleCristoBall
-                        account.
-                    </p>
-
                     <div className="grid md:grid-cols-2 gap-6">
                         <div className="bg-white/5 p-6 rounded-xl border border-white/10">
                             <h3 className="text-xl font-semibold mb-3 text-neon-cyan">
-                                Your Profile
+                                Tournaments History
                             </h3>
-                            <div className="space-y-2 text-white/80">
-                                <p>
-                                    <span className="text-white/50">Name:</span>{" "}
-                                    {user?.name || "—"}
-                                </p>
-                                <p>
-                                    <span className="text-white/50">
-                                        Email:
-                                    </span>{" "}
-                                    {user?.email}
-                                </p>
-                            </div>
+                            <p className="text-white/60">
+                                No tournaments history. Check back soon!
+                            </p>
                         </div>
 
                         <div className="bg-white/5 p-6 rounded-xl border border-white/10">

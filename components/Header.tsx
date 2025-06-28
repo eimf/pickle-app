@@ -32,7 +32,7 @@ export default function Header() {
                     <button
                         onClick={() => {
                             if (isSignedIn) {
-                                router.push("/profile");
+                                router.push("/dashboard");
                             } else {
                                 router.push("/signin");
                             }
